@@ -54,51 +54,98 @@ import './imt.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { useRef, useState } from 'react';
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonHeader>
-      <IonToolbar>
-        <IonTitle>Masa Index Tubuh</IonTitle>
-      </IonToolbar>
-    </IonHeader>
-    <IonContent className='ion-padding'>
-      <IonGrid>
-        <IonRow>
-          <IonCol>
-            <IonItem>
-              <IonLabel position='floating'>Tinggi Badan (meter)</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol>
-            <IonItem>
-              <IonLabel position='floating'>Berat Badan (kg)</IonLabel>
-              <IonInput></IonInput>
-            </IonItem>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol>
-            <IonButton className='w-full'>
-              <IonIcon slot='start' icon={scaleOutline} />
-              Hitung
-            </IonButton>
-          </IonCol>
-          <IonCol>
-            <IonButton className='w-full'>
-              <IonIcon slot='start' icon={refreshOutline} />
-              Reset
-            </IonButton>
-          </IonCol>
-        </IonRow>
-      </IonGrid>
-    </IonContent>
-  </IonApp>
-);
+const App: React.FC = () => {
+  // referensi variabel dan elemen html
+  const bb = useRef<HTMLIonInputElement>(null);
+  const tb = useRef<HTMLIonInputElement>(null);
+
+  // penyematan value ke dalam elemen html
+  const [imt, setImt] = useState(0);
+  
+  // Triger Tombol
+  const hitungImt=() => {
+    console.log('hitungImt')
+    // Menampung input dan memformulasikan index masa tubuh
+    // formula pertama
+    // const berat = Number(bb.current?.value);
+    // const tinggi = Number(tb.current?.value);
+    // const imt = +berat / (+tinggi * +tinggi);
+    // console.log(imt)
+
+    // formula kedua
+    const berat = bb.current!.value;
+    const tinggi = tb.current!.value;
+    if( !berat || !tinggi ){
+      return;
+    }
+    const imt = +berat /(+tinggi * +tinggi);
+    console.log(imt)
+
+    // tampilkan hasil perhitungan
+    setImt(imt)
+  }
+  const resetImt=() => {
+    console.log('resetImt')
+    bb.current!.value = '';
+    tb.current!.value = '';
+    setImt(0);
+  }
+  
+  return(
+    <IonApp>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Masa Index Tubuh</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className='ion-padding'>
+        <IonGrid>
+          <IonRow>
+            <IonCol>
+              <IonItem>
+                <IonLabel position='floating'>Tinggi Badan (meter)</IonLabel>
+                <IonInput ref={tb}></IonInput>
+              </IonItem>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonItem>
+                <IonLabel position='floating'>Berat Badan (kg)</IonLabel>
+                <IonInput ref={bb}></IonInput>
+              </IonItem>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonButton className='w-full' onClick={hitungImt}>
+                <IonIcon slot='start' icon={scaleOutline} />
+                Hitung
+              </IonButton>
+            </IonCol>
+            <IonCol>
+              <IonButton className='w-full' onClick={resetImt}>
+                <IonIcon slot='start' icon={refreshOutline} />
+                Reset
+              </IonButton>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol>
+              <IonItem>
+                <IonLabel position='floating'>Index Masa Tubuh</IonLabel>
+                <IonInput value={imt}></IonInput>
+              </IonItem>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </IonContent>
+    </IonApp>
+  );
+}
 
 export default App;
